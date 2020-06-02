@@ -58,22 +58,33 @@ def get(key):
 
 def put(key, value):
     slot = get_slot(key)
-    data[slot] = value
+    data[slot] = HashTableEntry(key, value)
 
 def delete(key):
     put(key, None)
 
-# print(get_slot('bob'))
-# print(get_slot('missi'))
+print(get_slot('bob'))
+print(get_slot('missi'))
 # print(get_slot('felix'))
 # print(get_slot('leopold'))
 # print(get_slot('max'))
+# print(get_slot('bailey'))
+# print(get_slot('houdini'))
 
 put('bob', 'GOAT')
-put('missi', 8800)
-
-print(get('bob'))
-print(get('missi'))
-print(get('felix'))
-
 print(data)
+put('missi', 8800)
+print(data)
+put('max', 8)
+print(data)
+put('bailey', 11)
+print(data)
+
+# print(get('bob'))
+# print(get('missi'))
+# print(get('felix'))
+
+# print(data)
+print(get('max'))
+
+[None, None, None, HashTableEntry('bob', 'GOAT'), None, HashTableEntry('missi', 8800), HashTableEntry('max', 8), None]
