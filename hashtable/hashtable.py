@@ -2,10 +2,14 @@ class HashTableEntry:
     """
     Linked List hash table key/value pair
     """
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
+
+    def __repr__(self):
+        return f'HashtableEntry({repr(self.key)},{repr(self.value)})'
 
 
 # Hash table can't have fewer than this many slots
@@ -22,7 +26,8 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
-
+        self.capacity = capacity
+        self.table = [None] * capacity
 
     def get_num_slots(self):
         """
@@ -36,6 +41,7 @@ class HashTable:
         """
         # Your code here
 
+        return len(self.table)
 
     def get_load_factor(self):
         """
@@ -45,6 +51,11 @@ class HashTable:
         """
         # Your code here
 
+        # number of things stored in the hash table / number of slots in the array
+        # When computing the load, keep track of the number of items in the hash table as you go.
+        # - When you put a new item in the hash table, increment the count
+        # - When you delete an item from the hash table, decrement the count
+        pass
 
     def fnv1(self, key):
         """
@@ -52,9 +63,8 @@ class HashTable:
 
         Implement this, and/or DJB2.
         """
-
+        pass
         # Your code here
-
 
     def djb2(self, key):
         """
@@ -64,13 +74,17 @@ class HashTable:
         """
         # Your code here
 
+        hash = 5381
+        for c in key:
+            hash = (hash * 33) + ord(c)
+        return hash
 
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
+        # return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
@@ -82,7 +96,22 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        i = self.hash_index(key)
+        self.table[i] = HashTableEntry(key, value)
 
+        # # Day 2 refactor
+        # Find slot for the key
+        # i = self.hash_index(key)
+
+        # # Search Ll for the key
+        # newHashTableEntry = HashTableEntry(key, value)
+
+        # If found, update it
+        # if self.table[i] is not None:
+        #     newHashTableEntry.next = self.table[i]
+
+        # If not found, make a new HashTableEntry and add it
+        # self.table[i] = newHashTableEntry
 
     def delete(self, key):
         """
@@ -93,7 +122,19 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        i = self.hash_index(key)
 
+        if self.table[i] == None:
+            print('No key found')
+        else:6
+            self.table[i] = None
+
+        # Day 2 refactor
+
+        # Find the slot for the key
+        # Search LL for the key
+        # If found, delete it from LL and reassign pointers
+        # If not found return None
 
     def get(self, key):
         """
@@ -105,6 +146,33 @@ class HashTable:
         """
         # Your code here
 
+        i = self.hash_index(key)
+
+        if self.table[i] == None:
+            return None
+        else:
+            return self.table[i].value
+
+        # # Day 2 refactor
+
+        # # Find the slot for the key
+        # i = self.hash_index(key)
+        # value = None
+
+        # # Search the LL for the key
+        # If found return value
+
+        # if self.table[i] is not None:
+        #     node = self.table[i]
+
+            # If not found keep looking
+        #     while node is not None and value is None:
+        #
+        #         if node.key == key:
+        #             value = node.value
+        #         else:
+        #             node = node.next
+        # return value
 
     def resize(self, new_capacity):
         """
@@ -115,6 +183,11 @@ class HashTable:
         """
         # Your code here
 
+        # 1. Allocate a new array of bigger size, typically double the previous size (or half the size if resizing down, down to some minimum)
+        # 2. Traverse the old hash table -- O(n) over the number of elements in the hash table
+        #     For each of the elements:
+        #     Figure out its slot in the bigger (or smaller), new array
+        #     Put it there
 
 
 if __name__ == "__main__":
