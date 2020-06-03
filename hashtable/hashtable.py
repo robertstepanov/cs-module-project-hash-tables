@@ -53,10 +53,6 @@ class HashTable:
         """
         # Your code here
 
-        # number of things stored in the hash table / number of slots in the array
-        # When computing the load, keep track of the number of items in the hash table as you go.
-        # - When you put a new item in the hash table, increment the count
-        # - When you delete an item from the hash table, decrement the count
         return self.item_count / len(self.table)
 
     def fnv1(self, key):
@@ -125,31 +121,26 @@ class HashTable:
         """
         # Your code here
 
-        # Day 2 refactor
-
-        # Find the slot for the key
-        # Search LL for the key
-        # If found, delete it from LL and reassign pointers
-        # If not found return None
-
         # Find the slot for the key
         i = self.hash_index(key)
         found = False
         # Search LL for the key
         if self.table[i] is not None:
-            ptr = self.table[i]
+            node = self.table[i]
             # If found, update
-            if ptr is not None and ptr.key == key:
-                self.table[i] = ptr.next
+            if node is not None and node.key == key:
+                self.table[i] = node.next
             else:
-                while ptr.next is not None and not found:
-                    if ptr.next.key == key:
-                        ptr.next = ptr.next.next
+                # If found, delete it from LL and reassign pointers
+                while node.next is not None and not found:
+                    if node.next.key == key:
+                        node.next = node.next.next
                         found = True
-                    ptr = ptr.next
+                    node = node.next
 
+        # If not found return None
         if not found:
-            print(f'Not able to find key: {key}')
+            print(f'Not able to find key')
 
     def get(self, key):
         """
@@ -160,8 +151,6 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
-        # # Day 2 refactor
 
         # # Find the slot for the key
         i = self.hash_index(key)
@@ -191,53 +180,18 @@ class HashTable:
         """
         # Your code here
 
-        # self.capacity *= 2
-        # oldTable = []
-
-        # for i in self.table:
-        #     if not i == None:
-        #         node = i
-        #         while node:
-        #             oldTable.append((node.key, node.value))
-        #             node = node.next
-        # self.table = [None] * self.capacity
-        # for pair in oldTable:
-        #     self.put(pair[0], pair[1])
-
-        # self.capacity = new_capacity
-        # new_array = [self.table] * new_capacity
-
-        # for slot in self.table:
-        #     cur = slot.head
-
-        #     while cur:
-        #         i = self.hash_index(cur.key)
-
-        #         if new_array[i].head == None:
-        #             new_array[i].head = HashTableEntry(cur.key, cur.value)
-
-        #         else:
-        #             node = HashTableEntry(cur.key, cur.value)
-        #             node.next = new_array[i].head
-        #             new_array[i].head = node
-        #         cur = cur.next
-        # self.table = new_array
-
         self.capacity *= 2
-        oldTable = self.table
+        new_table = []
+
+        for i in self.table:
+            if not i == None:
+                node = i
+                while node:
+                    new_table.append((node.key, node.value))
+                    node = node.next
         self.table = [None] * self.capacity
-
-        for hashTableEntry in oldTable:
-            node = hashTableEntry
-        while node is not None:
-            self.put(node.key, node.value)
-            node = node.next
-
-        # 1. Allocate a new array of bigger size, typically double the previous size (or half the size if resizing down, down to some minimum)
-        # 2. Traverse the old hash table -- O(n) over the number of elements in the hash table
-        #     For each of the elements:
-        #     Figure out its slot in the bigger (or smaller), new array
-        #     Put it there
+        for pair in new_table:
+            self.put(pair[0], pair[1])
 
 
 if __name__ == "__main__":
