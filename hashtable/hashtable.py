@@ -7,6 +7,7 @@ class HashTableEntry:
         self.key = key
         self.value = value
         self.next = None
+        self.head = None
 
     def __repr__(self):
         return f'HashtableEntry({repr(self.key)},{repr(self.value)})'
@@ -28,6 +29,7 @@ class HashTable:
         # Your code here
         self.capacity = capacity
         self.table = [None] * capacity
+        self.item_count = 0
 
     def get_num_slots(self):
         """
@@ -55,7 +57,7 @@ class HashTable:
         # When computing the load, keep track of the number of items in the hash table as you go.
         # - When you put a new item in the hash table, increment the count
         # - When you delete an item from the hash table, decrement the count
-        pass
+        return self.item_count / len(self.table)
 
     def fnv1(self, key):
         """
@@ -95,23 +97,23 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        i = self.hash_index(key)
-        self.table[i] = HashTableEntry(key, value)
 
         # # Day 2 refactor
         # Find slot for the key
-        # i = self.hash_index(key)
+        i = self.hash_index(key)
 
-        # # Search Ll for the key
-        # newHashTableEntry = HashTableEntry(key, value)
+        # Search Ll for the key
+        newHashTableEntry = HashTableEntry(key, value)
 
         # If found, update it
-        # if self.table[i] is not None:
-        #     newHashTableEntry.next = self.table[i]
+        if self.table[i] is not None:
+            newHashTableEntry.next = self.table[i]
 
         # If not found, make a new HashTableEntry and add it
-        # self.table[i] = newHashTableEntry
+        self.table[i] = newHashTableEntry
+
+        if self.get_load_factor() > 0.7:
+            self.resize(self.capacity * 2)
 
     def delete(self, key):
         """
@@ -122,12 +124,6 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        i = self.hash_index(key)
-
-        if self.table[i] == None:
-            print('No key found')
-        else:6
-            self.table[i] = None
 
         # Day 2 refactor
 
@@ -135,6 +131,25 @@ class HashTable:
         # Search LL for the key
         # If found, delete it from LL and reassign pointers
         # If not found return None
+
+        # Find the slot for the key
+        i = self.hash_index(key)
+        found = False
+        # Search LL for the key
+        if self.table[i] is not None:
+            ptr = self.table[i]
+            # If found, update
+            if ptr is not None and ptr.key == key:
+                self.table[i] = ptr.next
+            else:
+                while ptr.next is not None and not found:
+                    if ptr.next.key == key:
+                        ptr.next = ptr.next.next
+                        found = True
+                    ptr = ptr.next
+
+        if not found:
+            print(f'Not able to find key: {key}')
 
     def get(self, key):
         """
@@ -146,33 +161,26 @@ class HashTable:
         """
         # Your code here
 
-        i = self.hash_index(key)
-
-        if self.table[i] == None:
-            return None
-        else:
-            return self.table[i].value
-
         # # Day 2 refactor
 
         # # Find the slot for the key
-        # i = self.hash_index(key)
-        # value = None
+        i = self.hash_index(key)
+        value = None
 
-        # # Search the LL for the key
+        # Search the LL for the key
         # If found return value
 
-        # if self.table[i] is not None:
-        #     node = self.table[i]
+        if self.table[i] is not None:
+            node = self.table[i]
 
             # If not found keep looking
-        #     while node is not None and value is None:
-        #
-        #         if node.key == key:
-        #             value = node.value
-        #         else:
-        #             node = node.next
-        # return value
+            while node is not None and value is None:
+
+                if node.key == key:
+                    value = node.value
+                else:
+                    node = node.next
+        return value
 
     def resize(self, new_capacity):
         """
@@ -182,6 +190,48 @@ class HashTable:
         Implement this.
         """
         # Your code here
+
+        # self.capacity *= 2
+        # oldTable = []
+
+        # for i in self.table:
+        #     if not i == None:
+        #         node = i
+        #         while node:
+        #             oldTable.append((node.key, node.value))
+        #             node = node.next
+        # self.table = [None] * self.capacity
+        # for pair in oldTable:
+        #     self.put(pair[0], pair[1])
+
+        # self.capacity = new_capacity
+        # new_array = [self.table] * new_capacity
+
+        # for slot in self.table:
+        #     cur = slot.head
+
+        #     while cur:
+        #         i = self.hash_index(cur.key)
+
+        #         if new_array[i].head == None:
+        #             new_array[i].head = HashTableEntry(cur.key, cur.value)
+
+        #         else:
+        #             node = HashTableEntry(cur.key, cur.value)
+        #             node.next = new_array[i].head
+        #             new_array[i].head = node
+        #         cur = cur.next
+        # self.table = new_array
+
+        self.capacity *= 2
+        oldTable = self.table
+        self.table = [None] * self.capacity
+
+        for hashTableEntry in oldTable:
+            node = hashTableEntry
+        while node is not None:
+            self.put(node.key, node.value)
+            node = node.next
 
         # 1. Allocate a new array of bigger size, typically double the previous size (or half the size if resizing down, down to some minimum)
         # 2. Traverse the old hash table -- O(n) over the number of elements in the hash table

@@ -75,3 +75,9 @@ Resize:
    For each of the elements:
    Figure out its slot in the bigger (or smaller), new array
    Put it there
+
+## The General Problem the Hash Table Solves
+
+They search fast!
+
+We can use it to store and retrieve the results of any slow operation.
